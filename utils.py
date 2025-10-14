@@ -29,7 +29,7 @@ def bs_price(S0, K, sigma, t, r, option_type='call'):
     elif option_type == 'call':
         return S0*norm.cdf(d1) - K*np.exp(-r*t)*norm.cdf(d2)
     else:
-        print("Unrecognized option type:", option_type)
+        raise ValueError("Unrecognized option type: {}".format(option_type))
 
 
 def bs_delta(S0, K, sigma, t, r, option_type='call'):
@@ -54,7 +54,7 @@ def bs_delta(S0, K, sigma, t, r, option_type='call'):
     elif option_type == 'call':
         return norm.cdf(d1)
     else:
-        print("Unrecognized option type:", option_type)
+        raise ValueError("Unrecognized option type: {}".format(option_type))
 
 
 # Monte Carlo methods
@@ -78,3 +78,29 @@ def GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps):
 
     return paths_with_start
 
+
+def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, option_type='call'):
+    """
+    S0 (float): Underlying stock price at time 0
+    sigma (float): Yearly volatility
+    t (float): Time to expiration (years)
+    r (float): Risk-free interest rate
+    mu (float): Drift of log-returns
+    n_sims (int): Number of simulated paths
+
+    Returns:
+    Estimated option price (float), standard deviation (float)
+    """
+    paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps=1)
+    S_t = paths[:, -1]  # Terminal prices
+
+    if option_type == 'call':
+        payoffs = np.maximum(S_t - K, 0)
+    elif option_type == 'put':
+        payoffs = np.maximum(K - S_t, 0)
+    else:
+        raise ValueError("Unrecognized option type: {}".format(option_type))
+
+    discounted_payoff = np.exp(-r * t) * payoffs
+
+    return np.mean(discounted_payoff), np.std(discounted_payoff)/np.sqrt(n_sims)
