@@ -79,28 +79,64 @@ def GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps):
     return paths_with_start
 
 
-def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, option_type='call'):
-    """
-    S0 (float): Underlying stock price at time 0
-    sigma (float): Yearly volatility
-    t (float): Time to expiration (years)
-    r (float): Risk-free interest rate
-    mu (float): Drift of log-returns
-    n_sims (int): Number of simulated paths
+def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distribution=True, option_type='call'):
+    """Monte-Carlo simulation of a European option value with Black-Scholes assumptions with delta hedging.
 
+    Inputs:
+    S0 (float): underlying stock price at time 0
+    K (float): strike price
+    sigma (float): yearly volatility
+    t (float): time to expiration (years)
+    r (float): risk-free interest rate
+    mu (float): drift of log-returns
+    n_sims (int): number of simulated paths
+    n_hedges (int): number of delta-hedges
+    
     Returns:
-    Estimated option price (float), standard deviation (float)
+    If return_distribution is true, returns distribution of simulated call values with delta hedging;
+      if false, returns the average payoff and standard deviation of call option with delta hedging
+
+    To simulate the profit distribution of selling n_options number of call options for a premimum, run
+    n_options*(premium - bs_MC_call(S0, K, sigma, t, r, mu, n_sims, n_hedges) - tr_cost*n_hedges)
+    
     """
-    paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps=1)
-    S_t = paths[:, -1]  # Terminal prices
+    if n_hedges == 0:
+        paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps=1)
+        S_t = paths[:, -1]  # Terminal prices
 
-    if option_type == 'call':
-        payoffs = np.maximum(S_t - K, 0)
-    elif option_type == 'put':
-        payoffs = np.maximum(K - S_t, 0)
+        if option_type == 'call':
+            discounted_payoff = np.exp(-r * t) * np.maximum(S_t - K, 0)
+        elif option_type == 'put':
+            discounted_payoff = np.exp(-r * t) * np.maximum(K - S_t, 0)
+        else:
+            raise ValueError("Unrecognized option type: {}".format(option_type))
+
+        if return_distribution:
+            return discounted_payoff
+        else:
+            return np.mean(discounted_payoff), np.std(discounted_payoff)/np.sqrt(n_sims)
+
     else:
-        raise ValueError("Unrecognized option type: {}".format(option_type))
+        paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_hedges)
+        S_t = paths[:, -1]  # Terminal prices
 
-    discounted_payoff = np.exp(-r * t) * payoffs
+        if option_type == 'call':
+            discounted_payoff = np.exp(-r * t) * np.maximum(S_t - K, 0)
+        elif option_type == 'put':
+            discounted_payoff = np.exp(-r * t) * np.maximum(K - S_t, 0)
+        else:
+            raise ValueError("Unrecognized option type: {}".format(option_type))
 
-    return np.mean(discounted_payoff), np.std(discounted_payoff)/np.sqrt(n_sims)
+        times = np.linspace(0, t, n_hedges + 1)
+
+        deltas = bs_delta(paths[:,0:n_hedges], K, sigma, (t-times)[0:n_hedges], r, option_type=option_type)
+
+        stock_profits_discounted = (paths[:,1:n_hedges + 1] - \
+                                    paths[:,0:n_hedges]*np.exp(r*t/n_hedges))*np.exp(-r*times[1:n_hedges+1])*deltas
+
+        profit_with_hedging = discounted_payoff - np.sum(stock_profits_discounted, axis=1)
+
+        if return_distribution:
+            return profit_with_hedging
+        else:
+            return np.mean(profit_with_hedging), np.std(profit_with_hedging)/np.sqrt(n_sims)
