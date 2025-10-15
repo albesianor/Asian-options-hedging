@@ -1,10 +1,10 @@
 # Utils module for Erdos's quant finance bootcamp
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, gmean
 
 
-# Black-Scholes pricers
-
+# Analytic pricers
+# - Black-Scholes
 def bs_price(S0, K, sigma, t, r, option_type='call'):
     '''
     Black-Scholes Call Option formula
@@ -56,8 +56,33 @@ def bs_delta(S0, K, sigma, t, r, option_type='call'):
     else:
         raise ValueError("Unrecognized option type: {}".format(option_type))
 
+# Geometric Asian option
+def gao_price(S0, K, sigma, t, r, option_type='call'):
+    '''Geometric Asian option pricer
+    Inputs:
+    S0 (float): Stock price at time 0
+    K (float): Strike Price
+    sigma: Yearly volatility
+    t: Time to expiration (years)
+    r: Risk-free Interest rate
+
+    Return:
+    Computed value of a geometric Asian call/put option (float)
+    '''
+    b = (r - sigma**2 / 6) / 2
+    d1 = np.sqrt(3)*(np.log(S0/K) + (b + sigma**2 / 6)*t) / (sigma * np.sqrt(t))
+    d2 = d1 - sigma * np.sqrt(t/3)
+
+    if option_type == 'put':
+        return K * np.exp(-r*t) * norm.cdf(-d2) - S0 * np.exp((b-r)*t) * norm.cdf(-d1)
+    elif option_type == 'call':
+        return S0 * np.exp((b-r)*t) * norm.cdf(d1) - K * np.exp(-r*t) * norm.cdf(d2)
+    else:
+        raise ValueError("Unrecognized option type: {}".format(option_type))
+
 
 # Monte Carlo methods
+# - stock paths generator
 def GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps):
     """Simulates stock paths as geometric Brownian Motions
     Inputs:
@@ -78,7 +103,7 @@ def GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps):
 
     return paths_with_start
 
-
+# - European options
 def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distribution=True, option_type='call'):
     """Monte-Carlo simulation of a European option value with Black-Scholes assumptions with delta hedging.
 
@@ -140,3 +165,36 @@ def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distri
             return profit_with_hedging
         else:
             return np.mean(profit_with_hedging), np.std(profit_with_hedging)/np.sqrt(n_sims)
+
+# - Asian options
+def monte_carlo_gao(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, return_distribution=True, option_type="call"):
+    """
+    S0 (float): Underlying stock price at time 0
+    sigma (float): Yearly volatility
+    t (float): Time to expiration (years)
+    r (float): Risk-free interest rate
+    mu (float): Drift of log-returns
+    n_sims (int): Number of simulated paths
+    n_steps (int): Number of steps in the average
+
+    Returns:
+    If return_distribution is true, returns distribution of simulated values;
+      if false, returns the average payoff of option
+    """
+    paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps)
+    if geometric:
+        S = gmean(paths, axis=1)  # geometric mean of prices
+    else:
+        S = np.mean(paths, axis=1)  # arithmetic mean of prices
+
+    if option_type == "call":
+        discounted_payoff = np.exp(-r * t) * np.maximum(S - K, 0)
+    elif option_type == "put":
+        discounted_payoff = np.exp(-r * t) * np.maximum(K - S, 0)
+    else:
+        raise ValueError("Unrecognized option type: {}".format(option_type))
+
+    if return_distribution:
+        return discounted_payoff
+    else:
+        return np.mean(discounted_payoff)
