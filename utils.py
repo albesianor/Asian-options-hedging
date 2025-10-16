@@ -305,7 +305,8 @@ def monte_carlo_asian_hedged(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=
     times = np.linspace(0, t, n_steps + 1)
     deltas = gao_delta(paths[:,0:n_steps], K, sigma, (t-times)[0:n_steps], r, option_type=option_type)
 
-    stock_profits_discounted = (paths[:,1:n_steps + 1] - paths[:,0:n_steps]*np.exp(r*t/n_steps))*np.exp(-r*times[1:n_steps+1])*deltas
+    stock_profits_discounted = (paths[:,1:n_steps + 1] - paths[:,0:n_steps]*np.exp(r*t/n_steps))\
+        *np.exp(-r*times[1:n_steps+1])*deltas
     profit_of_call_with_hedging = discounted_payoff - np.sum(stock_profits_discounted, axis=1)
 
     if return_distribution:
@@ -367,7 +368,9 @@ def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometr
 
         # compute new delta
         tau = t - times[i+1]
-        Delta = gao_asian_conditional_delta(S_next, G, K, sigma, tau, r, t)
+        S_eff = G * ((S_next / G)**(1-(i+1)/n_steps))
+        sigma_eff = sigma * np.sqrt((1-(i+1)/n_steps)/3)
+        Delta = (1-(i+1)/n_steps) * (S_eff / S_next) * gao_delta(S_eff, K, sigma_eff, t - dt * n_steps, r, option_type=option_type)
 
         # rebalance bond position
         B = V - Delta * S_next
