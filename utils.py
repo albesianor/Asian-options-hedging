@@ -241,6 +241,62 @@ def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distri
         else:
             return np.mean(profit_with_hedging), np.std(profit_with_hedging)/np.sqrt(n_sims)
 
+# - self-financing hedged European options
+def mc_eur_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, option_type="call"):
+    """Market-maker's profits on a self-financing European option delta-hedging portfolio
+    S0 (float): Underlying stock price at time 0
+    sigma (float): Yearly volatility
+    t (float): Time to expiration (years)
+    r (float): Risk-free interest rate
+    mu (float): Drift of log-returns
+    premium (float): Premium of selling one option
+    n_sims (int): Number of simulated paths
+    n_steps (int): Number of steps in the average
+
+    Returns:
+    Distribution of profits
+    """
+    dt = t / n_steps
+
+    paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps)
+    S = paths[:,-1]
+
+    if option_type == "call":
+        payoff = np.maximum(S - K, 0)
+    elif option_type == "put":
+        payoff = np.maximum(K - S, 0)
+    else:
+        raise ValueError("Unrecognized option type: {}".format(option_type))
+
+    # initial delta and bond position
+    Delta = bs_delta(S0, K, sigma, t, r, option_type=option_type)
+    V = premium
+    B = V - Delta * S0
+
+
+    for i in range(n_steps):
+        S_next = paths[:, i+1]
+
+        # bond accrues interest
+        B *= np.exp(r * dt)
+
+        # portfolio value before rebalancing
+        V = Delta * S_next + B
+
+        # compute new delta
+        tau = t - (i + 1) * dt
+        new_Delta = bs_delta(S_next, K, sigma, tau, r, option_type=option_type)
+
+        # adjust bond for rebalancing cost
+        B = B - (new_Delta - Delta) * S_next
+
+        # update delta
+        Delta = new_Delta
+
+    V = Delta * S_next + B
+    
+    return (V - payoff) * np.exp(-r*t)
+
 # - Asian options
 def monte_carlo_asian(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, return_distribution=True, option_type="call"):
     """
@@ -327,10 +383,9 @@ def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometr
     n_steps (int): Number of steps in the average
 
     Returns:
-    If returns 
+    Distribution of profits
     """
     dt = t / n_steps
-    times = np.linspace(0, t, n_steps + 1)
 
     paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps)
 
@@ -340,9 +395,9 @@ def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometr
         S = np.mean(paths, axis=1)  # arithmetic mean of prices
 
     if option_type == "call":
-        discounted_payoff = np.exp(-r * t) * np.maximum(S - K, 0)
+        payoff = np.maximum(S - K, 0)
     elif option_type == "put":
-        discounted_payoff = np.exp(-r * t) * np.maximum(K - S, 0)
+        payoff = np.maximum(K - S, 0)
     else:
         raise ValueError("Unrecognized option type: {}".format(option_type))
 
@@ -357,24 +412,29 @@ def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometr
     for i in range(n_steps):
         S_next = paths[:, i+1]
 
-        # bond grows at risk-free rate
+        # bond accrues interest
         B *= np.exp(r * dt)
 
-        # update total portfolio
+        # portfolio value before rebalancing
         V = Delta * S_next + B
 
         # update geometric average
-        G = np.exp( ( (i+1)*np.log(G) + np.log(S_next) ) / (i+2) )
+        G = np.exp(((i+1) * np.log(G) + np.log(S_next)) / (i+2))
 
         # compute new delta
-        tau = t - times[i+1]
         S_eff = G * ((S_next / G)**(1-(i+1)/n_steps))
         sigma_eff = sigma * np.sqrt((1-(i+1)/n_steps)/3)
-        Delta = (1-(i+1)/n_steps) * (S_eff / S_next) * gao_delta(S_eff, K, sigma_eff, t - dt * n_steps, r, option_type=option_type)
+        tau = t - (i + 1) * dt
+        new_Delta = (1 - (i + 1)/n_steps) * (S_eff / S_next) * gao_delta(
+            S_eff, K, sigma_eff, tau, r, option_type=option_type
+        )
 
-        # rebalance bond position
-        B = V - Delta * S_next
+        # adjust bond for rebalancing cost
+        B = B - (new_Delta - Delta) * S_next
 
-    discounted_profit_of_call_with_hedging = discounted_payoff - V * np.exp(-r*t)
+        # update delta
+        Delta = new_Delta
 
-    return premium - discounted_profit_of_call_with_hedging
+    V = Delta * S_next + B
+    
+    return (V - payoff) * np.exp(-r*t)
