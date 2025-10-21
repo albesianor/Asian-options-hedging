@@ -330,46 +330,6 @@ def monte_carlo_asian(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, 
     else:
         return np.mean(discounted_payoff)
 
-# - hedged Asian options
-def monte_carlo_asian_hedged(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, return_distribution=True, option_type="call"):
-    """
-    S0 (float): Underlying stock price at time 0
-    sigma (float): Yearly volatility
-    t (float): Time to expiration (years)
-    r (float): Risk-free interest rate
-    mu (float): Drift of log-returns
-    n_sims (int): Number of simulated paths
-    n_steps (int): Number of steps in the average
-
-    Returns:
-    If return_distribution is true, returns distribution of simulated values;
-      if false, returns the average payoff of option
-    """
-    paths = GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps)
-    if geometric:
-        S = np.exp(np.mean(np.log(paths), axis=1))  # geometric mean of prices
-    else:
-        S = np.mean(paths, axis=1)  # arithmetic mean of prices
-
-    if option_type == "call":
-        discounted_payoff = np.exp(-r * t) * np.maximum(S - K, 0)
-    elif option_type == "put":
-        discounted_payoff = np.exp(-r * t) * np.maximum(K - S, 0)
-    else:
-        raise ValueError("Unrecognized option type: {}".format(option_type))
-
-    times = np.linspace(0, t, n_steps + 1)
-    deltas = gao_delta(paths[:,0:n_steps], K, sigma, (t-times)[0:n_steps], r, option_type=option_type)
-
-    stock_profits_discounted = (paths[:,1:n_steps + 1] - paths[:,0:n_steps]*np.exp(r*t/n_steps))\
-        *np.exp(-r*times[1:n_steps+1])*deltas
-    profit_of_call_with_hedging = discounted_payoff - np.sum(stock_profits_discounted, axis=1)
-
-    if return_distribution:
-        return profit_of_call_with_hedging
-    else:
-        return np.mean(profit_of_call_with_hedging)
-
 # - self-financing hedged Asian options
 def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometric=False, option_type="call"):
     """Market-maker's profits on a self-financing Asian option delta-hedging portfolio
