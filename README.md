@@ -68,6 +68,8 @@ Arithmetic options look also more susceptible to volatility, which can be explai
 
 ![Geometric - arithmetic options comparison](pictures/GAO-AAO_comparison.png)
 
-<img src="pictures/GAO-AAO_comparison_K.png" width="300">
-<img src="pictures/GAO-AAO_comparison_S0.png" width="300">
-<img src="pictures/GAO-AAO_comparison_sigma.png" width="300">
+![Geometric - arithmetic options comparison vs strike](pictures/GAO-AAO_comparison_K.png)
+
+![Geometric - arithmetic options comparison vs spot](pictures/GAO-AAO_comparison_S0.png)
+
+![Geometric - arithmetic options comparison vs volatility](pictures/GAO-AAO_comparison_sigma.png)
