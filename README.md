@@ -19,27 +19,24 @@ The path-dependency of Asian options makes the problem of pricing them particula
 ## Pricing Asian options
 Geometric Asian options have a closed-form pricing formula very similar to the classical Black-Scholes formula for European options.
 
----
-**Theorem.** Assume that $S_t$ follows a GBM distribution with yearly volatility $\sigma$.  Assume also that the risk-free interest rate is $r$.  Let $K$ be the strike price and set 
-$$
-b = \frac{1}{2} \left(r - \frac{\sigma^2}{6} \right), \quad d_1 = \sqrt{3}\frac{\log\frac{S_0}{K} + \left(b + \frac{\sigma^2}{6}\right)t}{\sigma\sqrt{t}}, \quad d_2 = d_1 - \frac{\sigma \sqrt{t}}{\sqrt{3}}.
-$$
-Then the fair price for a geometric Asian call option at time $t$ is
-$$
-C_0 = S_0 e^{(b-r)t} \Phi(d_1) - K e^{-rt} \Phi(d_2)
-$$
-and the fair price for a geometric Asian put option at time $t$ is
-$$
-P_0 = K e^{-rt} \Phi(-d_2) - S_0 e^{(b-r)t} \Phi(-d_1),
-$$
-where $\Phi$ is the CDF of the standard normal distribution $\mathcal{N}(0,1)$.
-Moreover,
-$$
-C_0 - P_0 = S_0 e^{(b-r)t} - K e^{-rt}
-$$
-(call-put parity).
-
----
+>**Theorem.** Assume that $S_t$ follows a GBM distribution with yearly volatility $\sigma$.  Assume also that the risk-free interest rate is $r$.  Let $K$ be the strike price and set 
+>
+>$b = \frac{1}{2} \left(r - \frac{\sigma^2}{6} \right), \quad d_1 = \sqrt{3}\frac{\log\frac{S_0}{K} + \left(b + \frac{\sigma^2}{6}\right)t}{\sigma\sqrt{t}}, \quad d_2 = d_1 - \frac{\sigma \sqrt{t}}{\sqrt{3}}.$
+>
+>Then the fair price for a geometric Asian call option at time $t$ is
+>
+>$C_0 = S_0 e^{(b-r)t} \Phi(d_1) - K e^{-rt} \Phi(d_2)$
+>
+>and the fair price for a geometric Asian put option at time $t$ is
+>
+>$P_0 = K e^{-rt} \Phi(-d_2) - S_0 e^{(b-r)t} \Phi(-d_1),$
+>
+>where $\Phi$ is the CDF of the standard normal distribution $\mathcal{N}(0,1)$.
+>Moreover,
+>
+>$C_0 - P_0 = S_0 e^{(b-r)t} - K e^{-rt}$
+>
+>(call-put parity).
 
 We implement a geometric Asian option pricing function in [Notebook 3](03_asian_options.ipynb).
 
