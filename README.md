@@ -73,3 +73,62 @@ Arithmetic options look also more susceptible to volatility, which can be explai
 ![Geometric - arithmetic options comparison vs spot](pictures/GAO-AAO_comparison_S0.png)
 
 ![Geometric - arithmetic options comparison vs volatility](pictures/GAO-AAO_comparison_sigma.png)
+
+### Profit distribution
+As with European options, the simulated profit distribution of Asian options has mean equal to the expected analytic price (at least for geometric options), but has a very long tail to the right (i.e. very large gains are possible).  Below are simulated profit distributions for one 1-year Asian call option with spot and strike prices $100.00, interest rate 4.5%, and volatility 0.4.
+
+![Geometric call profit](pictures/GAO_profit.png)
+
+![Arithmetic call profit](pictures/GAO_profit.png)
+
+
+A market-maker willing to contrast the chances of unlikely extreme losses then has to resort to delta-hedging.
+
+## $\Delta$-hedging Asian options
+Because geometric options have a closed-form solution, we use the formula to compute the delta of geometric options, and use that as a proxy for the delta of arithmetic options as well.  An alternative strategy would be to simulate the delta via Monte-Carlo, by taking small difference quotients, but that is too computationally expensive.
+
+In [Notebook 4](04_asian_hedging.ipynb), using the same notation as before, we find the delta of geometric call options to be 
+$$
+\Delta_{C_0} = e^{(b-r)t} \Phi(d_1),
+$$
+and the delta for put options to be
+$$
+\Delta_{P_0} = \Delta_{C_0} - e^{(b-r)t} = e^{(b-r)t} \left( \Phi(d_1) - 1 \right).
+$$
+
+### Naive hedging
+A first naive attempt at hedging Asian options is to just follow the blueprint given by the European option strategy, i.e. by using the formula above to compute delta at every step and use that to rebalance the portfolio.  This however performs rather poorly:
+
+![Naive geometric hedging](pictures/GAO_naive_hedging.png)
+
+Note that the average simulated profit is always significantly less than the expected profit from the analytic formula.  Running the same simulation with a positive drift $\mu = 0.3$, one instead obtains large gains.  This suggests that the hedging strategy is failing somewhere.
+
+A major issue is that the naive delta-hedging function is in fact discarding the path so far, and just computing delta as if the previous path did not matter.  Instead, one should keep track of the path so far, and compute delta conditionally on the (geometric) average up to the point.
+
+One can express the conditional delta in terms of the standard delta with effective parameters.  At time $t_i$:
+$$
+\Delta_i(S_{t_i}, G_{t_i}) = \frac{\partial S_\text{eff}}{\partial S_{t_i}} \Delta_{C_0}(S_\text{eff}, K, \sigma_\text{eff}, t - t_i),
+$$
+where $G_{t_i}$ is the geometric average up to time $t_i$, $S_\text{eff} = G_{t_i}^{t_i/t} S_{t_i}^{1 - t_i/t}$ by the properties of geometric averages, and $\sigma_\text{eff} = \sigma \sqrt{\frac{t - t_i}{3t}}$.  One moreover computes $\frac{\partial S_\text{eff}}{\partial S_{t_i}} = \frac{t-t_i}{t} \frac{S_\text{eff}}{S_{t_i}}$.
+
+Another problem with the naive delta-hedging approach is that it assumes that at each rebalancing step we are taking out or depositing the incremental P&L.  In other words, the portfolio does not have zero cash flow before maturity.  In real world, hedging portfolios instead are self-financing: at each step the portfolio holds $\Delta_i$ shares of stock and $B_i$ of cash/bonds.  Hence, the portfolio value is $V_i = \Delta_i S_i + B_i$.  The bond grows at the risk-free rate, and thus updates as $B_{i+1} = B_i e^{r dt}$, and there is no cash-flow entering or exiting the portfolio at intermediate times.
+
+### Another attempt at delta-hedging
+[Notebook 4](04_asian_hedging.ipynb) reimplements then the hedging strategy to use conditional deltas in a self-financing portfolio.  The outcome is still a bit off, but not as much as before.  The distribution of profits looks also more regular, and extreme values are less extreme, suggesting a partially working hedging strategy, that is however incomplete, likely reasons being the mixing continuous geometric average formulas with discrete hedging, and the impossibility to perfectly delta hedge Asian options by only trading the underlying asset.
+
+![Geometric hedging](pictures/GAO_hedging.png)
+
+The arithmetic hedging strategy is less precise, as expected given that we are using deltas from the geometric one as proxies.
+
+![Arithmetic hedging](pictures/AAO_hedging.png)
+
+### Sensibility to drift
+We can explore further the dependence on drift of our Asian option hedging strategy, by redoing the simulation with different amounts of drift: $\mu \in \{-0.4, -0.2, -0.1, 0, 0.1, 0.2, 0.4\}$.
+
+![Geometric hedging vs drift](pictures/GAO_hedging_drift.png)
+
+![Arithmetic hedging vs drift](pictures/AAO_hedging_drift.png)
+
+Note that, albeit imperfect, the geometric hedging strategy is fairly stable with respect to drift, showing a not-too-large positive correlation with drift, that gets more pronounced for large values of drift.
+
+In arithmetic hedging, the strategy has more sensibility to the drift term, which should be expected since the delta used is the one of the geometric option.  In particular, larger losses occur, especially with positive drifts.  Note however that extreme events are quite sparse, and that the perfectly balanced portfolio (return of 0) is within one standard deviation from the mean for all drifts.
