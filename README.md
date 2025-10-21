@@ -9,6 +9,12 @@ We implement:
 
 Finally, we compare the performance of these models against simulated market conditions and real-world volatility data.
 
+**TODO**
+- expand abstract with results
+- write index
+- write repo structure
+- write future follow-ups
+
 ### Index
 
 ## Getting started
@@ -142,8 +148,69 @@ In arithmetic hedging, the strategy has more sensibility to the drift term, whic
 
 
 ## Market comparison
+In [Notebook 5](05_european_market_comparison.ipynb) and [Notebook 6](06_asian_market_comparison.ipynb) we compare our pricing models with real-world data obtained from `yfinance`.  Ideally, one would compare the price of Asian options obtained from the models described above with real-world prices of the same options.  However, `yfinance` does not provide prices for Asian options, preventing a direct comparison.
+
+To work around this issue, in [Notebook 5](05_european_market_comparison.ipynb) we first compare Black-Scholes pricing of European calls to real-world call prices from `yfinance`.
+
+Next, in [Notebook 6](06_asian_market_comparison.ipynb), we historically backtest the pricing model for Asian options.  The results for European calls help us interpret the backtest for Asian options.
+
+In both cases, we will look at the following tickers:
+- SPDR S&P 500 ETF Trust (`SPY`),
+- Vanguard Total Stock Market Index Fund ETF (`VTI`),
+- Apple Inc (`AAPL`),
+- Microsoft Corp (`MSFT`).
+
 ### European options
+`yfinance` provides daily data of call prices.  On Friday, October 17, 2025, we obtained the following call prices.
+
+![SPY European calls](pictures/SPY_euro_calls.png)
+
+![VTI European calls](pictures/VTI_euro_calls.png)
+
+![AAPL European calls](pictures/AAPL_euro_calls.png)
+
+![MSFT European calls](pictures/MSFT_euro_calls.png)
+
+>**Remark.** The analytic geometric Asian option prices are virtually indistinguishable from the arithmetic ones in the graph.
+
+Note how the Black-Scholes prices approximately follow the market price, although they significantly underprice with respect to the market, with the error generally increasing in magnitude as the strike price increases.
+
+Note also how the models give lower prices to the Asian calls, as expected.
+
+From the point of view of market comparison of Asian options, the main takeaway is that, since B-S is underpricing European options compared to market prices, we should expect our Asian pricing models to be underpricing Asian options compared to hypothetical market prices.
+
 ### Asian options
+In [Notebook 6](06_asian_market_comparison.ipynb), we take windows over historical data and compare the actual discounted payout of an array of Asian calls to the expected one for geometric calls (from the formula) and arithmetic calls (from the Monte-Carlo simulation), using realized volatility in the previous month as volatility in the GBM model.
+
+The historical series starts on Jan 1, 2019 and ends on Dec 31, 2024.  We look at options expiring in 5 days, to be consistent with the European options market-comparison.  Averages are taken daily.
+
+#### `SPY`
+![SPY geometric calls](pictures/SPY_geometric_calls.png)
+
+![SPY arithmetic calls](pictures/SPY_arithmetic_calls.png)
+
+#### `VTI`
+![VTI geometric calls](pictures/VTI_geometric_calls.png)
+
+![VTI arithmetic calls](pictures/VTI_arithmetic_calls.png)
+
+### `AAPL`
+![AAPL geometric calls](pictures/AAPL_geometric_calls.png)
+
+![AAPL arithmetic calls](pictures/AAPL_arithmetic_calls.png)
+
+### `MSFT`
+![MSFT geometric calls](pictures/MSFT_geometric_calls.png)
+
+![MSFT arithmetic calls](pictures/MSFT_arithmetic_calls.png)
+
+Note first that the average P&L is positive in all cases, but recall that the B-S/M-C pricing for European options seems to be systematically underpricing calls compared to their real market prices, which we can assume to be a reasonable proxy for future discounted realized payoffs.  A similar phenomenon is probably happening for Asian options too, and could explain the consistent positive average P&L.  This likely reflects the difference between the risk-neutral dynamics assumed by the model and the empirical (real-world) dynamics, in particular the presence of a volatility risk premium or deviations from log-normality.
+
+Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count. This indicates that most hedging periods would result in at best no losses, occasionally offset by larger favorable outcomes.
+
+Finally, note that the standard deviation and 95% Value-at-Risk of P&L substantially exceed the mean in all cases, indicating that the model’s apparent profitability is not statistically or economically significant. The large dispersion and fat left tail imply that a market-maker using this strategy would face substantial risk of loss despite a positive expected P&L.
 
 ## Future directions
 - Heston model
+- actual comparison with real-world Asian prices
+- pricing of commodities
