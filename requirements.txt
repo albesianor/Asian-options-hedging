@@ -4,3 +4,4 @@ yfinance
 pandas
 numpy
 scipy
+brokenaxes
