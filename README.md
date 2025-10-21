@@ -1,6 +1,6 @@
 # Asian options: an attempt at pricing and hedging
 
-The goal of this project is to study pricing and hedging of Asian options. Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity. This makes them a practical and more stable alternative to standard European-style derivatives.
+The goal of this project is to study pricing and hedging of [Asian options](https://en.wikipedia.org/wiki/Asian_option). Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity. This makes them a practical and more stable alternative to standard European-style derivatives.
 
 We implement:
 - an analytic model for geometric Asian options (closed-form Black–Scholes solution),
@@ -8,6 +8,14 @@ We implement:
 - self-financing delta-hedging strategies for both.
 
 Finally, we compare the performance of these models against simulated market conditions and real-world volatility data.
+
+### Index
+
+## Getting started
+
+### Repository structure
+
+### Running the code
 
 ## Asian options basics
 Recall that a European call option is a contract whose payoff at expiration is given by $\max(s_t - K, 0)$, where $K$ is the predetermined strike price and $s_t$ is the asset value at expiration time $t$.  By design, European call options are then path-independent, but also susceptible to "last-minute volatility".
@@ -132,3 +140,11 @@ We can explore further the dependence on drift of our Asian option hedging strat
 Note that, albeit imperfect, the geometric hedging strategy is fairly stable with respect to drift, showing a not-too-large positive correlation with drift, that gets more pronounced for large values of drift.
 
 In arithmetic hedging, the strategy has more sensibility to the drift term, which should be expected since the delta used is the one of the geometric option.  In particular, larger losses occur, especially with positive drifts.  Note however that extreme events are quite sparse, and that the perfectly balanced portfolio (return of 0) is within one standard deviation from the mean for all drifts.
+
+
+## Market comparison
+### European options
+### Asian options
+
+## Future directions
+- Heston model
