@@ -1,4 +1,11 @@
-# Asian options: an attempt at pricing and hedging
+# Asian options: pricing, hedging, and market comparison
+**Author.** Roberto Albesiano
+
+**Date.** October 2025
+
+`TL;DR` &rarr; [Executive summary](summary.md)
+
+---
 
 The goal of this project is to study pricing and hedging of [Asian options](https://en.wikipedia.org/wiki/Asian_option). Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity, making them a more stable alternative to standard European-style derivatives. For instance, Asian options are often used by airlines to hedge average jet fuel costs over a month.
 
@@ -32,20 +39,46 @@ Below is a detailed explanation of the methodology and the results.
 - [Future directions](#future-directions)
 
 
-### Project structure
-The project is developed across six Jupyter notebooks:
-- [Notebook 1](01_stock_paths_modeling.ipynb) reviews and implements the geometric Brownian motion stock paths model,
-- [Notebook 2](02_european_options.ipynb) reviews and implements pricing and hedging of European options,
-- [Notebook 3](03_asian_options.ipynb) introduces and implements pricing of Asian options,
-- [Notebook 4](04_asian_hedging.ipynb) is an attempt at delta-hedging Asian options,
-- [Notebook 5](05_european_market_comparison.ipynb) performs a comparison between market and computed prices of European options,
-- [Notebook 6](06_asian_market_comparison.ipynb) historically backtests the Asian options pricing models implemented in the project.
+### How to Run
+#### Requirements
 
-Functions that are shared across notebooks are collected in [`utils.py`](utils.py).
+Install dependencies using:
+```bash
+pip install -r requirements.txt
+```
 
-Output dataframes produced by Notebooks 5 and 6 are saved in the [`outputs`](outputs/) folder as `csv` files.
 
-Graphs and pictures are collected in the [`pictures`](pictures/) folder.
+Packages used:
+```
+jupyter
+matplotlib
+seaborn
+yfinance
+pandas
+numpy
+scipy
+brokenaxes
+```
+
+#### Running the notebooks
+Each notebook builds on the previous ones, and can be run sequentially:
+
+1. [`01_stock_paths_modeling.ipynb`](01_stock_paths_modeling.ipynb) — Simulates GBM price paths.
+
+2. [`02_european_options.ipynb`](02_european_options.ipynb) — Implements and tests Black–Scholes pricing.
+
+3. [`03_asian_options.ipynb`](03_asian_options.ipynb) — Prices Asian options via analytic and Monte Carlo methods.
+
+4. [`04_asian_hedging.ipynb`](04_asian_hedging.ipynb) — Tests conditional-geometric delta-hedging.
+
+5. [`05_european_market_comparison.ipynb`](05_european_market_comparison.ipynb) — Compares B–S prices with real call quotes.
+
+6. [`06_asian_market_comparison.ipynb`](06_asian_market_comparison.ipynb) — Backtests Asian pricing models using historical data.
+
+Shared utility functions are defined in [`utils.py`](utils.py).
+
+Outputs (dataframes, CSVs, plots) are stored in the [`outputs/`](outputs/) and [`pictures/`](pictures/) folders automatically.
+
 
 
 ## Asian options basics
@@ -156,6 +189,8 @@ Another problem with the naive delta-hedging approach is that it assumes that at
 ### Another attempt at delta-hedging
 [Notebook 4](04_asian_hedging.ipynb) reimplements the hedging strategy to use conditional deltas in a self-financing portfolio.  The outcome is still a bit off, but not as much as before.  The distribution of profits looks also more regular, and extreme values are less extreme, suggesting a partially working hedging strategy, that is however incomplete, with likely reasons being the mixing continuous geometric average formulas with discrete hedging, and the impossibility to perfectly delta hedge Asian options by only trading the underlying asset.
 
+Below, strike and spot prices are $100.00, the interest rate is 4.5%, yearly volatility is 0.41, and time to expiration is 1 year.
+
 ![Geometric hedging](pictures/GAO_hedging.png)
 
 The arithmetic hedging strategy is less precise, as expected given that we are using deltas from the geometric one as proxies.
@@ -253,8 +288,12 @@ Note also that, although the mean P&L is positive, the distribution is skewed, a
 ## Future directions
 Because of the lack of Asian options data on `yfinance`, we had to resort to historically backtest the model.  Although this gives a reasonable measure of the model performance, it is not yet a complete real-world comparison.  A natural future direction is to obtain Asian options quotes and contrast them directly to our pricing model.
 
-A second direction is to try to improve the Asian pricing model itself.  A natural way would be to replace the simple geometric Brownian motion model with a more sophisticated model such as the Heston model, likely reducing the underpricing bias.
+A second direction is to try to improve the Asian pricing model itself.  A natural way would be to replace the simple geometric Brownian motion model with a more sophisticated model such as the Heston or SABR models, likely reducing the underpricing bias.
 
-One should also investigate further how Asian options pricing is done in real-world practice, in particular how averages are computed.  With more computing power, one could also try to improve the arithmetic Asian pricing by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric pricing as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
+One should also investigate further how Asian options pricing is done in real-world practice, in particular how averages are computed.
+
+With more computing power, one could also try to improve the arithmetic Asian hedging by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric hedging as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
+
+Since any hedging involving only the underlying asset is incomplete, one should also investigate more sophisticated hedging strategies involving other financial instruments.
 
 Finally, since Asian options are mostly used for commodities and currencies, one could expand the analysis in that direction, trying for instance to develop a full case-study where Asian options pricing plays a significant role.

@@ -1,0 +1,85 @@
+# Asian Options: pricing, hedging, and market comparison
+
+**Author.** Roberto Albesiano
+
+**Date.** October 2025
+
+This project studies Asian option pricing and hedging under the geometric Brownian motion framework.
+
+It implements analytical pricing for geometric Asian options, Monte Carlo simulation for arithmetic Asian options, and delta-hedging strategies.
+
+Finally, it compares model-based results with market data using realized volatilities.
+
+## 1. Overview
+Asian options are path-dependent derivatives whose payoff depends on the average of the underlying asset price rather than its terminal value.
+
+They are widely used in commodities, energy, and currency markets to mitigate short-term volatility and manipulation risk.
+
+- European call payoff: $\max(S_T − K, 0)$
+
+- Asian call payoff: $\max(\text{average}(S) − K, 0)$
+
+The average can be arithmetic or geometric. The geometric case admits a closed-form solution; the arithmetic case requires Monte Carlo simulation.
+
+Path dependence complicates hedging, since sensitivity depends on both current and past prices.
+
+## 2. Pricing and hedging
+### 2.1 Geometric Asian options
+
+Under GBM dynamics, the average price follows a lognormal distribution.
+This gives a closed-form price similar to Black–Scholes, with adjusted volatility and drift:
+
+$C_0 = S_0 e^{(b-r)t} \Phi(d_1) - K e^{-rt} \Phi(d_2)$,
+
+with
+
+$b = \frac{1}{2} \left(r - \frac{\sigma^2}{6} \right), \quad d_1 = \sqrt{3}\frac{\log\frac{S_0}{K} + \left(b + \frac{\sigma^2}{6}\right)t}{\sigma\sqrt{t}}, \quad d_2 = d_1 - \frac{\sigma \sqrt{t}}{\sqrt{3}}.$
+
+### 2.2 Arithmetic Asian options
+
+Priced by Monte Carlo simulation: the expected discounted payoff gives the option price.
+
+### 2.3 Conditional delta-hedging
+
+We use a conditional geometric delta as an approximate hedge for arithmetic Asian options.
+This approach stabilizes the hedged P&L relative to drift, though not perfectly.
+
+>- strike and spot prices: $100.00
+>- interest rate: 4.5%
+>- yearly volatility: 0.41
+>- time to expiration: 1 year
+>![Geometric hedging vs drift](pictures/GAO_hedging_drift.png)
+
+
+## 3. Market Comparison
+
+Because exchange-traded Asian options are scarce, Asian call prices are compared to hypothetical realized payoffs via backtesting.  The analysis uses realized volatility in the 21 days prior.
+
+For one geometric Asian call with 1 week expiry between Jan 1, 2019, and Dec 31, 2024:
+| Asset |  Mean P&L | Median  | VaR(95%)
+| ----- |  -------- | ---- | --------
+| `SPY`   |  +0.272    | 0.000 | -4.974
+| `VTI`   |  +0.134    | 0.000 | -2.666
+| `AAPL`  |  +0.180    | 0.000 | -2.930
+| `MSFT`  |  +0.261    | 0.000 | -5.230
+| `PDBC`  |  +0.005    | 0.000 | -0.183
+| `GLD`   |  +0.084    | 0.000 | -2.102
+
+
+## 4. Key findings
+| Observation                              | Interpretation                            |
+| ---------------------------------------- | ----------------------------------------- |
+| Model prices underprice calls vs. market | Missing volatility risk premium           |
+| Mean P&L positive but median ≈ 0         | Apparent profits due to underpricing bias |
+| P&L VaR >> mean                          | Model apparent profitability not statistically/economically significant               |
+| Drift sensitivity reduced by hedging     | Hedging is imperfect but partially effective     |
+
+## 5. Limitations and future work
+| Limitation                             | Proposed Direction                                                                                                                                 |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lack of real Asian option data               | Obtain OTC or institutional Asian option quotes for a true market comparison                              |
+| Simplified GBM dynamics                      | Replace GBM with Heston or SABR to capture stochastic volatility and reduce systematic underpricing bias.                    |
+| Limited understanding of market conventions  | Investigate how averaging conventions and fixing schedules are handled in real-world Asian option contracts.                                       |
+| Approximate delta for arithmetic options     | Use Monte Carlo difference quotient methods to estimate deltas more accurately; apply also to geometric hedging to account for discrete averaging. |
+| Incomplete hedging using only the underlying | Explore more complete hedging strategies using additional financial instruments.                                  |
+| Limited asset scope                          | Extend the analysis to commodity and FX markets, developing a full case study where Asian options play a significant practical role.               |
