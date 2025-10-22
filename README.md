@@ -3,14 +3,17 @@
 The goal of this project is to study pricing and hedging of [Asian options](https://en.wikipedia.org/wiki/Asian_option). Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity. This makes them a practical and more stable alternative to standard European-style derivatives.
 
 We implement:
-- an analytic model for geometric Asian options (closed-form Black–Scholes solution),
-- a Monte Carlo model for arithmetic Asian options, and
+- an analytic model for geometric Asian options pricing,
+- a Monte Carlo model for arithmetic Asian options pricing, and
 - self-financing delta-hedging strategies for both.
 
-Finally, we compare the performance of these models against simulated market conditions and real-world volatility data.
+Hedging Asian options in complicated by the path-dependent nature of these financial objects.  Still, albeit imperfect, our hedging strategy is fairly stable with respect to drift, especially in the geometric case. 
+
+We also compare the performance of these models against real-world market data:
+- the European options model underprices compared to real-world call quotes,
+- the Asian options model seems to be underpricing as well, with an apparent profitability of our pricing model probably due to drift dynamics.
 
 **TODO**
-- expand abstract with results
 - write future follow-ups
 
 ### Index
@@ -165,7 +168,7 @@ We can explore further the dependence on drift of our Asian option hedging strat
 
 ![Arithmetic hedging vs drift](pictures/AAO_hedging_drift.png)
 
-Note that, albeit imperfect, the geometric hedging strategy is fairly stable with respect to drift, showing a not-too-large positive correlation with drift, that gets more pronounced for large values of drift.
+Note that, albeit imperfect, the geometric hedging strategy is fairly stable with respect to drift, showing a slight positive correlation that gets more pronounced for large values of drift.
 
 In arithmetic hedging, the strategy has more sensibility to the drift term, which should be expected since the delta used is the one of the geometric option.  In particular, larger losses occur, especially with positive drifts.  Note however that extreme events are quite sparse, and that the perfectly balanced portfolio (return of 0) is within one standard deviation from the mean for all drifts.
 
@@ -244,9 +247,7 @@ Since Asian options are mostly used for commodities, we will also backtest with
 
 Note first that the average P&L is positive in all cases, but recall that the B-S/M-C pricing for European options seems to be systematically underpricing calls compared to their real market prices, which we can assume to be a reasonable proxy for future discounted realized payoffs.  A similar phenomenon is probably happening for Asian options too, and could explain the consistent positive average P&L.  This likely reflects the difference between the risk-neutral dynamics assumed by the model and the empirical (real-world) dynamics, in particular the presence of a volatility risk premium or deviations from log-normality.
 
-Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count.
-
-Finally, note that the standard deviation and 95% Value-at-Risk of P&L substantially exceed the mean in all cases, indicating that the model’s apparent profitability is not statistically or economically significant. The large dispersion and fat left tail imply that a market-maker using this strategy would face substantial risk of loss despite a positive expected P&L.
+Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count.  Moreover, the standard deviation and 95% Value-at-Risk of P&L substantially exceed the mean in all cases, indicating that the model’s apparent profitability is not statistically or economically significant.
 
 ## Future directions
 - Heston model
