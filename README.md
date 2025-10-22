@@ -1,6 +1,6 @@
 # Asian options: an attempt at pricing and hedging
 
-The goal of this project is to study pricing and hedging of [Asian options](https://en.wikipedia.org/wiki/Asian_option). Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity. This makes them a more stable alternative to standard European-style derivatives.
+The goal of this project is to study pricing and hedging of [Asian options](https://en.wikipedia.org/wiki/Asian_option). Asian options are widely used in commodity, energy, and currency markets because their average-based payoff reduces sensitivity to short-term volatility, manipulation, or illiquidity, making them a more stable alternative to standard European-style derivatives. For instance, Asian options are often used by airlines to hedge average jet fuel costs over a month.
 
 We implement:
 - an analytic model for geometric Asian options pricing,
@@ -12,6 +12,8 @@ Hedging Asian options in complicated by the path-dependent nature of these finan
 We also compare the performance of these models against real-world market data:
 - the European options model underprices compared to real-world call quotes,
 - the Asian options model seems to be underpricing as well, with an apparent profitability of our pricing model probably due to drift dynamics and imperfections of the model itself.
+
+Below is a detailed explanation of the methodology and the results.
 
 
 ### Index
@@ -205,7 +207,7 @@ Note also how the models give lower prices to the Asian calls, as expected.
 From the point of view of market comparison of Asian options, the main takeaway is that, since B-S is underpricing European options compared to market prices, we should expect our Asian pricing models to be underpricing Asian options compared to hypothetical market prices.
 
 ### Asian options
-In [Notebook 6](06_asian_market_comparison.ipynb), we take windows over historical data and compare the actual discounted payout of an array of Asian calls to the expected one for geometric calls (from the formula) and arithmetic calls (from the Monte-Carlo simulation), using realized volatility in the previous month as volatility in the GBM model.
+In [Notebook 6](06_asian_market_comparison.ipynb), we take windows over historical data and compare the actual discounted payout of an array of Asian calls to the expected one for geometric calls (from the formula) and arithmetic calls (from the Monte-Carlo simulation).  We use realized volatility in the previous month as volatility in the GBM model, since historical data for implied volatility is not available via `yfinance`.
 
 The historical series starts on Jan 1, 2019 and ends on Dec 31, 2024.  We look at options expiring in 5 days, to be consistent with the European options market-comparison.  Averages are taken daily.
 
@@ -251,6 +253,8 @@ Note also that, although the mean P&L is positive, the distribution is skewed, a
 ## Future directions
 Because of the lack of Asian options data on `yfinance`, we had to resort to historically backtest the model.  Although this gives a reasonable measure of the model performance, it is not yet a complete real-world comparison.  A natural future direction is to obtain Asian options quotes and contrast them directly to our pricing model.
 
-A second direction is to try to improve the Asian pricing model itself.  A natural way would be to replace the simple geometric Brownian motion model with a more sophisticated model such as, to start, the Heston model.  One should also investigate further how Asian options pricing is done in real-world practice, in particular how averages are computed.  With more computing power, one could also try to improve the arithmetic Asian pricing by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric pricing as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
+A second direction is to try to improve the Asian pricing model itself.  A natural way would be to replace the simple geometric Brownian motion model with a more sophisticated model such as the Heston model, likely reducing the underpricing bias.
+
+One should also investigate further how Asian options pricing is done in real-world practice, in particular how averages are computed.  With more computing power, one could also try to improve the arithmetic Asian pricing by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric pricing as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
 
 Finally, since Asian options are mostly used for commodities and currencies, one could expand the analysis in that direction, trying for instance to develop a full case-study where Asian options pricing plays a significant role.
