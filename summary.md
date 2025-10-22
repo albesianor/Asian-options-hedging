@@ -51,7 +51,7 @@ This approach stabilizes the hedged P&L relative to drift, though not perfectly.
 
 Because exchange-traded Asian options are scarce, Asian call prices are compared to hypothetical realized payoffs via backtesting.  The analysis uses realized volatility in the 21 days prior.
 
-For one geometric Asian call with 1 week expiry between Jan 1, 2019, and Dec 31, 2024:
+We compute the P&L distribution of buying calls at the price indicated by our models and holding them to maturity, for one geometric Asian call with 1 week expiry between Jan 1, 2019, and Dec 31, 2024:
 | Asset |  Mean P&L | Median  | VaR(95%)
 | ----- |  -------- | ---- | --------
 | `SPY`   |  +0.272    | 0.000 | -4.974

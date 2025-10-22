@@ -11,7 +11,7 @@ The goal of this project is to study pricing and hedging of [Asian options](http
 
 We implement:
 - an analytic model for geometric Asian options pricing,
-- a Monte Carlo model for arithmetic Asian options pricing, and
+- a Monte-Carlo model for arithmetic Asian options pricing, and
 - self-financing delta-hedging strategies for both.
 
 Hedging Asian options in complicated by the path-dependent nature of these financial objects.  Still, albeit imperfect, our hedging strategy is fairly stable with respect to drift, especially in the geometric case. 
@@ -21,6 +21,8 @@ We also compare the performance of these models against real-world market data:
 - the Asian options model seems to be underpricing as well, with an apparent profitability of our pricing model probably due to drift dynamics and imperfections of the model itself.
 
 Below is a detailed explanation of the methodology and the results.
+
+`TL;DR` &rarr; [Executive summary](summary.md)
 
 
 ### Index
@@ -65,9 +67,9 @@ Each notebook builds on the previous ones, and can be run sequentially:
 
 1. [`01_stock_paths_modeling.ipynb`](01_stock_paths_modeling.ipynb) — Simulates GBM price paths.
 
-2. [`02_european_options.ipynb`](02_european_options.ipynb) — Implements and tests Black–Scholes pricing.
+2. [`02_european_options.ipynb`](02_european_options.ipynb) — Implements and tests Black–Scholes pricing, and delta-hedging with transaction costs.
 
-3. [`03_asian_options.ipynb`](03_asian_options.ipynb) — Prices Asian options via analytic and Monte Carlo methods.
+3. [`03_asian_options.ipynb`](03_asian_options.ipynb) — Prices Asian options via analytic and Monte-Carlo methods.
 
 4. [`04_asian_hedging.ipynb`](04_asian_hedging.ipynb) — Tests conditional-geometric delta-hedging.
 
@@ -77,7 +79,7 @@ Each notebook builds on the previous ones, and can be run sequentially:
 
 Shared utility functions are defined in [`utils.py`](utils.py).
 
-Outputs (dataframes, CSVs, plots) are stored in the [`outputs/`](outputs/) and [`pictures/`](pictures/) folders automatically.
+Outputs (dataframes, CSVs, plots) are stored in the [`outputs/`](outputs/) and [`pictures/`](pictures/) folders.
 
 
 
@@ -86,7 +88,7 @@ Recall that a European call option is a contract whose payoff at expiration is g
 
 Asian call (resp., put) options are an alternative contract trying to address the European option's susceptibility to short-term volatility, by defining the payoff at expiration to be $\max(\bar{S} - K, 0)$ (resp., $\max(K - \bar{S}, 0)$ ), where $\bar{S}$ is either the arithmetic average of the stock prices $\bar{S} = \frac{1}{N} \sum_{i=1}^N s_{t_i}$ or the geometric average $\bar{S} = \left(\prod_{i=1}^N s_{t_i} \right)^{1/N}$, with $N$ being the number of subdivisions of the time interval $[0,t]$.  This feature makes Asian options especially useful in markets where prices can experience temporary spikes or manipulations near maturity such as commodities and energy or currency markets, or where participants want to smooth exposure to volatility.
 
-The path-dependency of Asian options makes the problem of pricing them particularly interesting.  Geometric Asian option has a closed-form solution, while the arithmetic Asian option has not, and so one is naturally led to Monte-Carlo approaches.  Another interesting feature is that delta-hedging strategies need to take into account path-dependence, as we will explain below.
+The path-dependency of Asian options makes the problem of pricing them particularly interesting.  Geometric Asian options have closed-form pricing, while arithmetic Asian options have not, and so one is naturally led to Monte-Carlo approaches.  Another interesting feature is that delta-hedging strategies need to take into account path-dependence, as we will explain below.
 
 ## Pricing Asian options
 Geometric Asian options have a closed-form pricing formula very similar to the classical Black-Scholes formula for European options.
@@ -112,7 +114,7 @@ Geometric Asian options have a closed-form pricing formula very similar to the c
 
 We implement a geometric Asian option pricing function in [Notebook 3](03_asian_options.ipynb).
 
-Arithmetic options, on the other side, have no closed-form pricing formulas, and so we need to resort to Monte-Carlo methods for pricing them.  The pricing of arithmetic Asian options is also implemented in [Notebook 3](03_asian_options.ipynb).
+Arithmetic options, on the other side, have no closed-form pricing formulas, and so we resort to Monte-Carlo methods for pricing them.  The pricing of arithmetic Asian options is also implemented in [Notebook 3](03_asian_options.ipynb).
 
 ### Simulation accuracy
 By comparing the analytic and Monte-Carlo option pricing of geometric options, we conclude that a decent balance between computational speed and accuracy is achieved between 10,000 and 100,000 simulations.  We use the latter when possible, and resort to small multiples of the former when necessary.
@@ -250,6 +252,8 @@ Since Asian options are mostly used for commodities, we will also backtest with
 - [Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF](https://etfdb.com/etf/PDBC/#etf-ticker-profile) (`PDBC`),
 - [SPDR Gold Shares](https://www.spdrgoldshares.com/) (`GLD`).
 
+The graphs below show the P&L distribution of buying calls at the price indicated by our models and holding them to maturity.
+
 
 #### `SPY`
 ![SPY geometric calls](pictures/SPY_geometric_calls.png)
@@ -294,6 +298,6 @@ One should also investigate further how Asian options pricing is done in real-wo
 
 With more computing power, one could also try to improve the arithmetic Asian hedging by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric hedging as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
 
-Since any hedging involving only the underlying asset is incomplete, one should also investigate more sophisticated hedging strategies involving other financial instruments.
+Since any hedging involving only the underlying asset is incomplete, one should also investigate more sophisticated hedging strategies comprising also other financial instruments.
 
 Finally, since Asian options are mostly used for commodities and currencies, one could expand the analysis in that direction, trying for instance to develop a full case-study where Asian options pricing plays a significant role.
