@@ -15,9 +15,9 @@ Asian options are path-dependent derivatives whose payoff depends on the average
 
 They are widely used in commodities, energy, and currency markets to mitigate short-term volatility and manipulation risk.
 
-- European call payoff: $\max(S_T − K, 0)$
+- European call payoff: $\max(S_T - K, 0)$
 
-- Asian call payoff: $\max(\text{average}(S) − K, 0)$
+- Asian call payoff: $\max(\text{average}(S) - K, 0)$
 
 The average can be arithmetic or geometric. The geometric case admits a closed-form solution; the arithmetic case requires Monte Carlo simulation.
 
@@ -68,7 +68,7 @@ We compute the P&L distribution of buying calls at the price indicated by our mo
 | Observation                              | Interpretation                            |
 | ---------------------------------------- | ----------------------------------------- |
 | Model prices underprice calls vs. market | Missing volatility risk premium           |
-| Mean P&L positive but median ≈ 0         | Apparent profits due to underpricing bias |
+| Mean P&L positive but median about 0     | Apparent profits due to underpricing bias |
 | P&L VaR >> mean                          | Model apparent profitability not statistically/economically significant               |
 | Drift sensitivity reduced by hedging     | Hedging is imperfect but partially effective     |
 
