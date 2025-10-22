@@ -13,8 +13,6 @@ We also compare the performance of these models against real-world market data:
 - the European options model underprices compared to real-world call quotes,
 - the Asian options model seems to be underpricing as well, with an apparent profitability of our pricing model probably due to drift dynamics.
 
-**TODO**
-- write future follow-ups
 
 ### Index
 - [Project structure](#project-structure)
@@ -250,6 +248,8 @@ Note first that the average P&L is positive in all cases, but recall that the B-
 Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count.  Moreover, the standard deviation and 95% Value-at-Risk of P&L substantially exceed the mean in all cases, indicating that the model’s apparent profitability is not statistically or economically significant.
 
 ## Future directions
-- Heston model
-- actual comparison with real-world Asian prices
-- pricing of commodities
+Because of the lack of Asian options data on `yfinance`, we had to resort to historically backtest the model.  Although this gives a reasonable measure of the model performance, it is not yet a complete real-world comparison.  A natural future direction is to obtain Asian options quotes and contrast them directly to our pricing model.
+
+A second direction is to try to improve the Asian pricing model itself.  A natural way would be to replace the simple geometric Brownian motion model with a more sophisticated model such as, to start, the Heston model.  One should also investigate further how Asian options pricing is done in real-world practice, in particular how averages are computed.  With more computing power, one could also try to improve the arithmetic Asian pricing by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric pricing as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
+
+Finally, since Asian options are mostly used for commodities and currencies, one could expand the analysis in that direction, trying for instance to develop a full case-study where Asian options pricing plays a significant role.
