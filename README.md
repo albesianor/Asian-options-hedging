@@ -11,12 +11,10 @@ Finally, we compare the performance of these models against simulated market con
 
 **TODO**
 - expand abstract with results
-- write index
-- write repo structure
 - write future follow-ups
 
 ### Index
-- [Getting started](#getting-started)
+- [Project structure](#project-structure)
 - [Asian options basics](#asian-options-basics)
 - [Pricing Asian options](#pricing-asian-options)
   * [Simulation accuracy](#simulation-accuracy)
@@ -32,11 +30,21 @@ Finally, we compare the performance of these models against simulated market con
 - [Future directions](#future-directions)
 
 
-## Getting started
+### Project structure
+The project is developed across six Jupyter notebooks:
+- [Notebook 1](01_stock_paths_modeling.ipynb) reviews and implements the geometric Brownian motion stock paths model,
+- [Notebook 2](02_european_options.ipynb) reviews and implements pricing and hedging of European options,
+- [Notebook 3](03_asian_options.ipynb) introduces and implements pricing of Asian options,
+- [Notebook 4](04_asian_hedging.ipynb) is an attempt at delta-hedging Asian options,
+- [Notebook 5](05_european_market_comparison.ipynb) performs a comparison between market and computed prices of European options,
+- [Notebook 6](06_asian_market_comparison.ipynb) historically backtests the Asian options pricing models implemented in the project.
 
-### Repository structure
+Functions that are shared across notebooks are collected in [`utils.py`](utils.py).
 
-### Running the code
+Output dataframes produced by Notebooks 5 and 6 are saved in the [`outputs`](outputs/) folder as `csv` files.
+
+Graphs and pictures are collected in the [`pictures`](pictures/) folder.
+
 
 ## Asian options basics
 Recall that a European call option is a contract whose payoff at expiration is given by $\max(s_t - K, 0)$, where $K$ is the predetermined strike price and $s_t$ is the asset value at expiration time $t$.  By design, European call options are then path-independent, but also susceptible to "last-minute volatility".
