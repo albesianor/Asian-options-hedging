@@ -16,6 +16,21 @@ Finally, we compare the performance of these models against simulated market con
 - write future follow-ups
 
 ### Index
+- [Getting started](#getting-started)
+- [Asian options basics](#asian-options-basics)
+- [Pricing Asian options](#pricing-asian-options)
+  * [Simulation accuracy](#simulation-accuracy)
+  * [Comparison with Black-Scholes prices](#comparison-with-black-scholes-prices)
+  * [Comparison between geometric and arithmetic options](#comparison-between-geometric-and-arithmetic-options)
+  * [Profit distribution](#profit-distribution)
+- [Hedging Asian options](#hedging-asian-options)
+  * [Naive hedging](#naive-hedging)
+  * [Another attempt at delta-hedging](#another-attempt-at-delta-hedging)
+- [Market comparison](#market-comparison)
+  * [European options](#european-options)
+  * [Asian options](#asian-options)
+- [Future directions](#future-directions)
+
 
 ## Getting started
 
@@ -98,7 +113,7 @@ As with European options, the simulated profit distribution of Asian options has
 
 A market-maker willing to contrast the chances of unlikely extreme losses then has to resort to delta-hedging.
 
-## $\Delta$-hedging Asian options
+## Hedging Asian options
 Because geometric options have a closed-form solution, we use the formula to compute the delta of geometric options, and use that as a proxy for the delta of arithmetic options as well.  An alternative strategy would be to simulate the delta via Monte-Carlo, by taking small difference quotients, but that is too computationally expensive.
 
 In [Notebook 4](04_asian_hedging.ipynb), using the same notation as before, we find the delta of geometric call options to be 
