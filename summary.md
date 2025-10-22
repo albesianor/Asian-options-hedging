@@ -24,9 +24,8 @@ The average can be arithmetic or geometric. The geometric case admits a closed-f
 Path dependence complicates hedging, since sensitivity depends on both current and past prices.
 
 ## 2. Pricing and hedging
-### 2.1 Geometric Asian options
-
-Under GBM dynamics, the average price follows a lognormal distribution.
+### 2.1 Pricing
+**Geometric.** Under GBM dynamics, the average price follows a lognormal distribution.
 This gives a closed-form price similar to Black–Scholes, with adjusted volatility and drift:
 
 $C_0 = S_0 e^{(b-r)t} \Phi(d_1) - K e^{-rt} \Phi(d_2)$,
@@ -35,13 +34,10 @@ with
 
 $b = \frac{1}{2} \left(r - \frac{\sigma^2}{6} \right), \quad d_1 = \sqrt{3}\frac{\log\frac{S_0}{K} + \left(b + \frac{\sigma^2}{6}\right)t}{\sigma\sqrt{t}}, \quad d_2 = d_1 - \frac{\sigma \sqrt{t}}{\sqrt{3}}.$
 
-### 2.2 Arithmetic Asian options
+**Arithmetic.** Priced by Monte Carlo simulation: the expected discounted payoff gives the option price.
 
-Priced by Monte Carlo simulation: the expected discounted payoff gives the option price.
-
-### 2.3 Conditional delta-hedging
-
-We use a conditional geometric delta as an approximate hedge for arithmetic Asian options.
+### 2.2 Hedging
+We use a conditional geometric delta as an approximate hedge for Asian options.
 This approach stabilizes the hedged P&L relative to drift, though not perfectly.
 
 >- strike and spot prices: $100.00
@@ -64,6 +60,8 @@ For one geometric Asian call with 1 week expiry between Jan 1, 2019, and Dec 31,
 | `MSFT`  |  +0.261    | 0.000 | -5.230
 | `PDBC`  |  +0.005    | 0.000 | -0.183
 | `GLD`   |  +0.084    | 0.000 | -2.102
+
+![SPY market comparison](pictures/SPY_geometric_calls.png)
 
 
 ## 4. Key findings
