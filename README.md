@@ -199,6 +199,11 @@ In [Notebook 6](06_asian_market_comparison.ipynb), we take windows over historic
 
 The historical series starts on Jan 1, 2019 and ends on Dec 31, 2024.  We look at options expiring in 5 days, to be consistent with the European options market-comparison.  Averages are taken daily.
 
+Since Asian options are mostly used for commodities, we will also backtest with
+- [Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF](https://etfdb.com/etf/PDBC/#etf-ticker-profile) (`PDBC`),
+- [SPDR Gold Shares](https://www.spdrgoldshares.com/) (`GLD`).
+
+
 #### `SPY`
 ![SPY geometric calls](pictures/SPY_geometric_calls.png)
 
@@ -209,19 +214,29 @@ The historical series starts on Jan 1, 2019 and ends on Dec 31, 2024.  We look a
 
 ![VTI arithmetic calls](pictures/VTI_arithmetic_calls.png)
 
-### `AAPL`
+#### `AAPL`
 ![AAPL geometric calls](pictures/AAPL_geometric_calls.png)
 
 ![AAPL arithmetic calls](pictures/AAPL_arithmetic_calls.png)
 
-### `MSFT`
+#### `MSFT`
 ![MSFT geometric calls](pictures/MSFT_geometric_calls.png)
 
 ![MSFT arithmetic calls](pictures/MSFT_arithmetic_calls.png)
 
+#### `PDBC`
+![PDBC geometric calls](pictures/PDBC_geometric_calls.png)
+
+![PDBC arithmetic calls](pictures/PDBC_arithmetic_calls.png)
+
+#### `GLD`
+![GLD geometric calls](pictures/GLD_geometric_calls.png)
+
+![GLD arithmetic calls](pictures/GLD_arithmetic_calls.png)
+
 Note first that the average P&L is positive in all cases, but recall that the B-S/M-C pricing for European options seems to be systematically underpricing calls compared to their real market prices, which we can assume to be a reasonable proxy for future discounted realized payoffs.  A similar phenomenon is probably happening for Asian options too, and could explain the consistent positive average P&L.  This likely reflects the difference between the risk-neutral dynamics assumed by the model and the empirical (real-world) dynamics, in particular the presence of a volatility risk premium or deviations from log-normality.
 
-Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count. This indicates that most hedging periods would result in at best no losses, occasionally offset by larger favorable outcomes.
+Note also that, although the mean P&L is positive, the distribution is skewed, and the median is practically indistinguishable from 0 and has a very large count.
 
 Finally, note that the standard deviation and 95% Value-at-Risk of P&L substantially exceed the mean in all cases, indicating that the model’s apparent profitability is not statistically or economically significant. The large dispersion and fat left tail imply that a market-maker using this strategy would face substantial risk of loss despite a positive expected P&L.
 
