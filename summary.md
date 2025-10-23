@@ -21,8 +21,8 @@ The average can be arithmetic or geometric.
 - The arithmetic case requires Monte-Carlo simulation.
 
 ### This project
-- studies Asian option pricing and hedging under the geometric Brownian motion framework,
-- implements analytical pricing for geometric Asian options, Monte-Carlo simulation for arithmetic Asian options, and delta-hedging strategies,
+- implements analytical pricing for geometric Asian options, Monte-Carlo simulation for arithmetic Asian options under GBM assumptions,
+- explore delta-hedging strategies,
 - compares model-based results with market data using realized volatilities.
 
 Path dependence complicates hedging, since sensitivity depends on both current and past prices.
