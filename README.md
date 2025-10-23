@@ -297,6 +297,8 @@ One should also investigate further how Asian options pricing is done in real-wo
 
 With more computing power, one could also try to improve the arithmetic Asian hedging by replacing the geometric delta with a Monte-Carlo difference quotient approximation.  This last improvement could in fact be extended to geometric hedging as well, since the delta in that case is computed assuming continuous averaging, which is just an approximation of what happens in real markets.
 
+To improve computing time, one should also explore stochastic PDEs methods to replace Monte-Carlo simulations, where possible.
+
 Since any hedging involving only the underlying asset is incomplete, one should also investigate more sophisticated hedging strategies comprising also other financial instruments.
 
 Finally, since Asian options are mostly used for commodities and currencies, one could expand the analysis in that direction, trying for instance to develop a full case-study where Asian options pricing plays a significant role.

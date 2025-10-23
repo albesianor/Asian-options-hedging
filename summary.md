@@ -80,8 +80,10 @@ We compute the P&L distribution of buying calls at the price indicated by our mo
 | Limitation                             | Proposed direction                                                                                                                                 |
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Lack of real Asian option data               | Obtain OTC or institutional Asian option quotes for a true market comparison                              |
+| Realized volatility | Replace with implied volatility obtained from European calls data. |
 | Simplified GBM dynamics                      | Replace GBM with Heston or SABR to capture stochastic volatility and reduce systematic underpricing bias.                    |
 | Limited understanding of market conventions  | Investigate how averaging conventions and fixing schedules are handled in real-world Asian option contracts.                                       |
 | Approximate delta for arithmetic options     | Use Monte-Carlo difference quotient methods to estimate deltas more accurately; apply also to geometric hedging to account for discrete averaging. |
 | Incomplete hedging using only the underlying | Explore more complete hedging strategies using additional financial instruments.                                  |
 | Limited asset scope                          | Extend the analysis to commodity and FX markets, developing a full case study where Asian options play a more significant practical role.               |
+| High computing time | Explore stochastic PDEs methods to replace Monte-Carlo simulations where possible. |
