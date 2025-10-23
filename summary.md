@@ -20,7 +20,7 @@ The average can be arithmetic or geometric.
 - The geometric case admits a closed-form solution.
 - The arithmetic case requires Monte-Carlo simulation.
 
-**This project**
+### This project
 - studies Asian option pricing and hedging under the geometric Brownian motion framework,
 - implements analytical pricing for geometric Asian options, Monte-Carlo simulation for arithmetic Asian options, and delta-hedging strategies,
 - compares model-based results with market data using realized volatilities.
@@ -77,11 +77,11 @@ We compute the P&L distribution of buying calls at the price indicated by our mo
 
 
 ## 5. Limitations and future work
-| Limitation                             | Proposed Direction                                                                                                                                 |
+| Limitation                             | Proposed direction                                                                                                                                 |
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Lack of real Asian option data               | Obtain OTC or institutional Asian option quotes for a true market comparison                              |
 | Simplified GBM dynamics                      | Replace GBM with Heston or SABR to capture stochastic volatility and reduce systematic underpricing bias.                    |
 | Limited understanding of market conventions  | Investigate how averaging conventions and fixing schedules are handled in real-world Asian option contracts.                                       |
 | Approximate delta for arithmetic options     | Use Monte-Carlo difference quotient methods to estimate deltas more accurately; apply also to geometric hedging to account for discrete averaging. |
 | Incomplete hedging using only the underlying | Explore more complete hedging strategies using additional financial instruments.                                  |
-| Limited asset scope                          | Extend the analysis to commodity and FX markets, developing a full case study where Asian options play a significant practical role.               |
+| Limited asset scope                          | Extend the analysis to commodity and FX markets, developing a full case study where Asian options play a more significant practical role.               |

@@ -3,7 +3,7 @@
 
 **Date.** October 2025
 
-`TL;DR` &rarr; [Executive summary](summary.md)
+`TL;DR` &rarr; [Executive summary](executive_summary.pdf)
 
 ---
 
@@ -22,7 +22,7 @@ We also compare the performance of these models against real-world market data:
 
 Below is a detailed explanation of the methodology and the results.
 
-`TL;DR` &rarr; [Executive summary](summary.md)
+`TL;DR` &rarr; [Executive summary](executive_summary.pdf)
 
 
 ### Index
