@@ -155,7 +155,7 @@ As with European options, the simulated profit distribution of Asian options has
 
 ![Geometric call profit](pictures/GAO_profit.png)
 
-![Arithmetic call profit](pictures/GAO_profit.png)
+![Arithmetic call profit](pictures/AAO_profit.png)
 
 
 A market-maker willing to contrast the chances of unlikely extreme losses then has to resort to delta-hedging.
