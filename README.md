@@ -133,6 +133,7 @@ Estimated call value with 1000000 simulations: $9.78 with standard error 0.01641
 ### Comparison with Black-Scholes prices
 Geometric Asian options have a lower expected return than European options, with the difference increasing with increasing volatility.  They are also, as expected, less susceptible to volatility.
 
+> 1-year call at $K = S_0 = \$100.00, \sigma = 0.4, r = 4.5\%$.
 ![Geometric Asian options - Black-Scholes comparison](pictures/GAO-BS_comparison.png)
 
 ### Comparison between geometric and arithmetic options
@@ -142,12 +143,10 @@ Arithmetic options look also more susceptible to volatility, which can be explai
 
 >**Note.** In the graph below, the geometric price is computed using the closed-form formula, while the arithmetic price is computed via Monte-Carlo methods.
 
+> 1-year call at $K = S_0 = \$100.00, \sigma = 0.4, r = 4.5\%$.
 ![Geometric - arithmetic options comparison](pictures/GAO-AAO_comparison.png)
-
 ![Geometric - arithmetic options comparison vs strike](pictures/GAO-AAO_comparison_K.png)
-
 ![Geometric - arithmetic options comparison vs spot](pictures/GAO-AAO_comparison_S0.png)
-
 ![Geometric - arithmetic options comparison vs volatility](pictures/GAO-AAO_comparison_sigma.png)
 
 ### Profit distribution
