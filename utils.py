@@ -12,9 +12,9 @@ def bs_price(S0, K, sigma, t, r, option_type='call'):
     Inputs:
     S0 (float): Stock price at time 0
     K (float): Strike Price
-    sigma: Yearly volatility
-    t: Time to expiration (years)
-    r: Risk-free Interest rate
+    sigma (float): Yearly volatility
+    t (float): Time to expiration (years)
+    r (float): Risk-free Interest rate
 
 
     Return:
@@ -38,9 +38,9 @@ def bs_delta(S0, K, sigma, t, r, option_type='call'):
     Inputs:
     S0 (float): Stock price at time 0
     K (float): Strike Price
-    sigma: Yearly volatility
-    t: Time to expiration (years)
-    r: Risk-free Interest rate
+    sigma (float): Yearly volatility
+    t (float): Time to expiration (years)
+    r (float): Risk-free Interest rate
     
     
     Return:
@@ -180,7 +180,7 @@ def GBM_paths(S0, sigma, t, r, mu, n_sims, n_steps):
 
 # - European options
 def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distribution=True, option_type='call'):
-    """Monte-Carlo simulation of a European option value with Black-Scholes assumptions with delta hedging.
+    """Monte-Carlo simulation of a European option value with GBM assumptions with delta hedging.
 
     Inputs:
     S0 (float): underlying stock price at time 0
@@ -244,6 +244,8 @@ def monte_carlo_european(S0, K, sigma, t, r, mu, n_sims, n_hedges, return_distri
 # - self-financing hedged European options
 def mc_eur_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, option_type="call"):
     """Market-maker's profits on a self-financing European option delta-hedging portfolio
+
+    Inputs:
     S0 (float): Underlying stock price at time 0
     sigma (float): Yearly volatility
     t (float): Time to expiration (years)
@@ -299,7 +301,9 @@ def mc_eur_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, option_ty
 
 # - Asian options
 def monte_carlo_asian(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, return_distribution=True, option_type="call"):
-    """
+    """Monte-Carlo simulation of a Asian option value with Black-Scholes assumptions
+
+    Inputs:
     S0 (float): Underlying stock price at time 0
     sigma (float): Yearly volatility
     t (float): Time to expiration (years)
@@ -333,6 +337,8 @@ def monte_carlo_asian(S0, K, sigma, t, r, mu, n_sims, n_steps, geometric=False, 
 # - self-financing hedged Asian options
 def mc_asian_sf_hedged(S0, K, sigma, t, r, mu, premium, n_sims, n_steps, geometric=False, option_type="call"):
     """Market-maker's profits on a self-financing Asian option delta-hedging portfolio
+
+    Inputs:
     S0 (float): Underlying stock price at time 0
     sigma (float): Yearly volatility
     t (float): Time to expiration (years)
