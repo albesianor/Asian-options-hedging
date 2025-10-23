@@ -51,7 +51,6 @@ This approach stabilizes the hedged P&L relative to drift, though not perfectly.
 
 
 ## 3. Market Comparison
-
 Because exchange-traded Asian options are scarce, Asian call prices are compared to hypothetical realized payoffs via backtesting.  The analysis uses realized volatility in the 21 days prior.
 
 We compute the P&L distribution of buying calls at the price indicated by our models and holding them to maturity, for one geometric Asian call with 1 week expiry between Jan 1, 2019, and Dec 31, 2024:
@@ -68,6 +67,7 @@ We compute the P&L distribution of buying calls at the price indicated by our mo
 
 
 ## 4. Key findings
+A side market comparison for European options guides us in the interpretation of the one for Asian options.
 | Observation                              | Interpretation                            |
 | ---------------------------------------- | ----------------------------------------- |
 | Model prices underprice calls vs. market | Missing volatility risk premium           |

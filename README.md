@@ -22,8 +22,46 @@ We also compare the performance of these models against real-world market data:
 
 Below is a detailed explanation of the methodology and the results.
 
-`TL;DR` &rarr; [Executive summary](executive_summary.pdf)
 
+### Noteboooks structure
+Each notebook builds on the previous ones, and can be run sequentially:
+
+1. [`01_stock_paths_modeling.ipynb`](01_stock_paths_modeling.ipynb) — Simulates GBM price paths.
+
+2. [`02_european_options.ipynb`](02_european_options.ipynb) — Implements and tests Black–Scholes pricing, and European delta-hedging with transaction costs.
+
+3. [`03_asian_options.ipynb`](03_asian_options.ipynb) — Prices Asian options via analytic and Monte-Carlo methods.
+
+4. [`04_asian_hedging.ipynb`](04_asian_hedging.ipynb) — Tests conditional-geometric delta-hedging.
+
+5. [`05_european_market_comparison.ipynb`](05_european_market_comparison.ipynb) — Compares B–S prices with real call quotes.
+
+6. [`06_asian_market_comparison.ipynb`](06_asian_market_comparison.ipynb) — Backtests Asian pricing models using historical data.
+
+Shared utility functions are defined in [`utils.py`](utils.py).
+
+Outputs (dataframes, CSVs, plots) are stored in the [`outputs/`](outputs/) and [`pictures/`](pictures/) folders.
+
+
+#### Requirements
+Install dependencies using:
+```bash
+pip install -r requirements.txt
+```
+
+Packages used:
+```
+jupyter
+matplotlib
+seaborn
+yfinance
+pandas
+numpy
+scipy
+brokenaxes
+```
+
+`TL;DR` &rarr; [Executive summary](executive_summary.pdf)
 
 ### Index
 - [Asian options basics](#asian-options-basics)
@@ -39,48 +77,6 @@ Below is a detailed explanation of the methodology and the results.
   * [European options](#european-options)
   * [Asian options](#asian-options)
 - [Future directions](#future-directions)
-
-
-### How to Run
-#### Requirements
-
-Install dependencies using:
-```bash
-pip install -r requirements.txt
-```
-
-
-Packages used:
-```
-jupyter
-matplotlib
-seaborn
-yfinance
-pandas
-numpy
-scipy
-brokenaxes
-```
-
-#### Running the notebooks
-Each notebook builds on the previous ones, and can be run sequentially:
-
-1. [`01_stock_paths_modeling.ipynb`](01_stock_paths_modeling.ipynb) — Simulates GBM price paths.
-
-2. [`02_european_options.ipynb`](02_european_options.ipynb) — Implements and tests Black–Scholes pricing, and delta-hedging with transaction costs.
-
-3. [`03_asian_options.ipynb`](03_asian_options.ipynb) — Prices Asian options via analytic and Monte-Carlo methods.
-
-4. [`04_asian_hedging.ipynb`](04_asian_hedging.ipynb) — Tests conditional-geometric delta-hedging.
-
-5. [`05_european_market_comparison.ipynb`](05_european_market_comparison.ipynb) — Compares B–S prices with real call quotes.
-
-6. [`06_asian_market_comparison.ipynb`](06_asian_market_comparison.ipynb) — Backtests Asian pricing models using historical data.
-
-Shared utility functions are defined in [`utils.py`](utils.py).
-
-Outputs (dataframes, CSVs, plots) are stored in the [`outputs/`](outputs/) and [`pictures/`](pictures/) folders.
-
 
 
 ## Asian options basics
